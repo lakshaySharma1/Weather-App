@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App by Lakshay</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glass-bg: rgba(20, 20, 35, 0.65); /* Slightly darker for contrast */
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-main: #ffffff;
+            --text-secondary: #b0b0b0;
+            --accent-color: #00d4ff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
+            perspective: 1000px; /* CRITICAL for 3D Effect */
+        }
+
+        /* --- 1. LIVE FLOWING BACKGROUND --- */
+        .scenery-container {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none; /* Mouse passes through to body for 3D calculation */
+        }
+
+        .layer-mountains {
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 100%; height: 100%;
+            background: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+            z-index: 1;
+        }
+
+        .layer-clouds {
+            position: absolute;
+            top: 0; left: 0;
+            width: 200%;
+            height: 100%;
+            background: url('https://raw.githubusercontent.com/redfire-studio/backgrounds/main/clouds-transparent.png') repeat-x;
+            background-size: 50% 100%;
+            z-index: 2;
+            opacity: 0.8;
+            animation: flowClouds 60s linear infinite;
+        }
+
+        @keyframes flowClouds {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        /* --- 2. WEATHER OVERLAYS --- */
+        .weather-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 3;
+            display: none;
+        }
+
+        .rain-drop {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.6);
+            width: 2px; height: 15px;
+            top: -20px;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall { to { transform: translateY(100vh); } }
+
+        /* --- 3. THE 3D GLASS CARD --- */
+        .glass-card {
+            position: relative;
+            z-index: 10;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px 30px;
+            width: 90%;
+            max-width: 480px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            
+            /* 3D Transform Properties */
+            transform-style: preserve-3d;
+            transform: rotateX(0deg) rotateY(0deg);
+            transition: transform 0.1s ease-out; /* Smooth follow delay */
+        }
+
+        /* --- 4. BRANDING --- */
+        .app-branding {
+            text-align: center;
+            margin-bottom: 25px;
+            transform: translateZ(20px); /* Pops out in 3D */
+        }
+        
+        .app-branding h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #fff, var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .credit-corner {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 400;
+            letter-spacing: 1px;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        /* --- 5. INPUT AREA --- */
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            transform: translateZ(30px); /* Pops out more */
+        }
+
+        input {
+            flex-grow: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 20px;
+            border-radius: 30px;
+            color: white;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus { border-color: var(--accent-color); box-shadow: 0 0 10px rgba(0, 212, 255, 0.3); }
+
+        button {
+            background: var(--accent-color);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover { transform: scale(1.05); }
+
+        /* --- 6. WEATHER CONTENT --- */
+        .main-info {
+            text-align: center;
+            margin-bottom: 30px;
+            transform: translateZ(40px); /* Highest pop */
+        }
+
+        .city-name { font-size: 2.2rem; font-weight: 700; margin: 0; }
+        .region { color: var(--text-secondary); margin-bottom: 10px; font-size: 0.9rem; }
+        
+        .temp-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .temp-val { font-size: 4.5rem; font-weight: 700; line-height: 1; }
+        
+        .weather-icon-img {
+            width: 80px; height: 80px;
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
+            animation: floatIcon 4s ease-in-out infinite; 
+        }
+        @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        .condition-text { font-size: 1.2rem; color: var(--accent-color); margin-top: 10px; }
+
+        /* --- 7. DETAILED GRID --- */
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            transform: translateZ(20px);
+        }
+
+        .grid-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px 5px;
+            border-radius: 15px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid transparent;
+            transition: 0.3s;
+        }
+        .grid-item:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-2px); }
+
+        .label { font-size: 0.7rem; color: var(--text-secondary); margin-top: 5px; text-transform: uppercase; }
+        .value { font-size: 0.95rem; font-weight: 600; margin-top: 2px; }
+
+        /* Wind Fan Animation */
+        .wind-fan { width: 24px; height: 24px; position: relative; }
+        .fan-blade { position: absolute; top: 50%; left: 50%; width: 24px; height: 4px; background: white; border-radius: 2px; transform: translate(-50%, -50%); }
+        .fan-blade:nth-child(2) { transform: translate(-50%, -50%) rotate(90deg); }
+        .spinning { animation: spin var(--spin-speed, 2s) linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Loader & Error */
+        .loader { width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--accent-color); border-radius: 50%; animation: loadingSpin 1s infinite linear; margin: 20px auto; display: none; }
+        @keyframes loadingSpin { 100% { transform: rotate(360deg); } }
+        .error-msg { color: #ff4d4d; text-align: center; margin-top: 10px; display:none; }
+
+    </style>
+</head>
+<body>
+
+    <div class="scenery-container">
+        <div class="layer-mountains"></div>
+        <div class="layer-clouds"></div>
+        <div class="weather-overlay" id="rainOverlay"></div>
+    </div>
+
+    <div class="glass-card" id="card3D">
+        
+        <div class="app-branding">
+            <h1>Weather App</h1>
+        </div>
+
+        <div class="search-container">
+            <input type="text" id="cityInput" placeholder="Search City..." autocomplete="off">
+            <button id="searchBtn">GO</button>
+        </div>
+
+        <div class="loader" id="loader"></div>
+        <div class="error-msg" id="errorMsg"></div>
+
+        <div id="weatherContent" style="display:none;">
+            <div class="main-info">
+                <h2 class="city-name" id="cityName">City</h2>
+                <p class="region" id="regionName">Region</p>
+                
+                <div class="temp-wrapper">
+                    <img id="weatherIcon" src="" class="weather-icon-img" alt="Weather Icon">
+                    <div class="temp-val" id="tempVal">--°</div>
+                </div>
+                <div class="condition-text" id="conditionText">Clear</div>
+            </div>
+
+            <div class="details-grid">
+                <div class="grid-item">
+                    <div class="wind-fan spinning" id="windFan">
+                        <div class="fan-blade"></div>
+                        <div class="fan-blade"></div>
+                    </div>
+                    <span class="label">Wind</span>
+                    <span class="value" id="windVal">--</span>
+                </div>
+
+                <div class="grid-item">
+                    <span style="font-size:1.2rem">💧</span>
+                    <span class="label">Humidity</span>
+                    <span class="value" id="humidityVal">--%</span>
+                </div>
+
+                <div class="grid-item">
+                    <span style="font-size:1.2rem">🌡️</span>
+                    <span class="label">Feels Like</span>
+                    <span class="value" id="feelsLikeVal">--°</span>
+                </div>
+
+                <div class="grid-item">
+                    <span style="font-size:1.2rem">👁️</span>
+                    <span class="label">Visibility</span>
+                    <span class="value" id="visVal">-- km</span>
+                </div>
+
+                <div class="grid-item">
+                    <span style="font-size:1.2rem">☀️</span>
+                    <span class="label">UV Index</span>
+                    <span class="value" id="uvVal">--</span>
+                </div>
+
+                <div class="grid-item">
+                    <span style="font-size:1.2rem">⏲️</span>
+                    <span class="label">Pressure</span>
+                    <span class="value" id="pressureVal">-- mb</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="credit-corner">by lakshay</div>
+
+    <script>
+        // CONFIG
+        const API_KEY = "94bed28c656e4a1f9e985936252611"; 
+        const BASE_URL = "https://api.weatherapi.com/v1/current.json";
+
+        // DOM ELEMENTS
+        const card = document.getElementById('card3D');
+        const cityInput = document.getElementById('cityInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const weatherContent = document.getElementById('weatherContent');
+        const loader = document.getElementById('loader');
+        const errorMsg = document.getElementById('errorMsg');
+        const rainOverlay = document.getElementById('rainOverlay');
+        const windFan = document.getElementById('windFan');
+
+        // --- 3D TILT LOGIC (Restored) ---
+        document.addEventListener('mousemove', (e) => {
+            // Calculate center of screen
+            const x = (window.innerWidth / 2 - e.pageX) / 20; // 20 controls sensitivity
+            const y = (window.innerHeight / 2 - e.pageY) / 20;
+
+            // Apply rotation to card
+            card.style.transform = `rotateY(${-x}deg) rotateX(${y}deg)`;
+        });
+
+        // --- FETCH LOGIC ---
+        async function fetchWeather() {
+            const query = cityInput.value.trim();
+            if(!query) return;
+
+            weatherContent.style.display = 'none';
+            errorMsg.style.display = 'none';
+            loader.style.display = 'block';
+            rainOverlay.style.display = 'none';
+            rainOverlay.innerHTML = ''; 
+
+            try {
+                const res = await fetch(`${BASE_URL}?key=${API_KEY}&q=${query}`);
+                const data = await res.json();
+                if(!res.ok) throw new Error("City not found");
+                renderData(data);
+            } catch(err) {
+                errorMsg.innerText = "Location not found.";
+                errorMsg.style.display = 'block';
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+
+        function renderData(data) {
+            const { location, current } = data;
+
+            document.getElementById('cityName').innerText = location.name;
+            document.getElementById('regionName').innerText = `${location.region}, ${location.country}`;
+            document.getElementById('tempVal').innerText = Math.round(current.temp_c) + "°";
+            document.getElementById('conditionText').innerText = current.condition.text;
+            document.getElementById('weatherIcon').src = "https:" + current.condition.icon;
+            
+            document.getElementById('windVal').innerText = current.wind_kph + " km/h";
+            document.getElementById('humidityVal').innerText = current.humidity + "%";
+            document.getElementById('feelsLikeVal').innerText = Math.round(current.feelslike_c) + "°";
+            document.getElementById('visVal').innerText = current.vis_km;
+            document.getElementById('uvVal').innerText = current.uv;
+            document.getElementById('pressureVal').innerText = current.pressure_mb;
+
+            // Wind Speed Animation Logic
+            const kph = current.wind_kph;
+            let spinDuration;
+            if (kph < 5) spinDuration = '4s';
+            else if (kph < 15) spinDuration = '2s';
+            else if (kph < 30) spinDuration = '1s';
+            else spinDuration = '0.3s';
+            windFan.style.setProperty('--spin-speed', spinDuration);
+
+            // Rain Animation Logic
+            const cond = current.condition.text.toLowerCase();
+            if(cond.includes('rain') || cond.includes('drizzle') || cond.includes('shower')) {
+                createRain();
+            }
+
+            weatherContent.style.display = 'block';
+        }
+
+        function createRain() {
+            rainOverlay.style.display = 'block';
+            for(let i=0; i<50; i++) {
+                const drop = document.createElement('div');
+                drop.classList.add('rain-drop');
+                drop.style.left = Math.random() * 100 + '%';
+                drop.style.animationDuration = (Math.random() * 1 + 0.5) + 's'; 
+                drop.style.animationDelay = Math.random() * 2 + 's';
+                rainOverlay.appendChild(drop);
+            }
+        }
+
+        searchBtn.addEventListener('click', fetchWeather);
+        cityInput.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') fetchWeather();
+        });
+    </script>
+</body>
+</html>
