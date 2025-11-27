@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --glass-bg: rgba(20, 20, 35, 0.65); /* Slightly darker for contrast */
+            --glass-bg: rgba(20, 20, 35, 0.65);
             --glass-border: rgba(255, 255, 255, 0.15);
             --text-main: #ffffff;
             --text-secondary: #b0b0b0;
@@ -20,22 +20,22 @@
             font-family: 'Poppins', sans-serif;
             color: var(--text-main);
             height: 100vh;
-            overflow: hidden;
+            overflow: hidden; 
             display: flex;
             justify-content: center;
             align-items: center;
             background-color: #000;
-            perspective: 1000px; /* CRITICAL for 3D Effect */
+            perspective: 1200px; /* Increased perspective for better 3D feel */
         }
 
-        /* --- 1. LIVE FLOWING BACKGROUND --- */
+        /* --- 1. BACKGROUND --- */
         .scenery-container {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: -1;
             overflow: hidden;
-            pointer-events: none; /* Mouse passes through to body for 3D calculation */
+            pointer-events: none;
         }
 
         .layer-mountains {
@@ -49,8 +49,7 @@
         .layer-clouds {
             position: absolute;
             top: 0; left: 0;
-            width: 200%;
-            height: 100%;
+            width: 200%; height: 100%;
             background: url('https://raw.githubusercontent.com/redfire-studio/backgrounds/main/clouds-transparent.png') repeat-x;
             background-size: 50% 100%;
             z-index: 2;
@@ -63,7 +62,6 @@
             to { transform: translateX(-50%); }
         }
 
-        /* --- 2. WEATHER OVERLAYS --- */
         .weather-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -82,7 +80,7 @@
 
         @keyframes fall { to { transform: translateY(100vh); } }
 
-        /* --- 3. THE 3D GLASS CARD --- */
+        /* --- 2. GLASS CARD --- */
         .glass-card {
             position: relative;
             z-index: 10;
@@ -91,33 +89,27 @@
             -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border);
             border-radius: 24px;
-            padding: 40px 30px;
+            padding: 40px;
             width: 90%;
-            max-width: 480px;
+            max-width: 480px; 
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-            
-            /* 3D Transform Properties */
             transform-style: preserve-3d;
             transform: rotateX(0deg) rotateY(0deg);
-            transition: transform 0.1s ease-out; /* Smooth follow delay */
+            transition: transform 0.1s ease-out;
         }
 
-        /* --- 4. BRANDING --- */
-        .app-branding {
-            text-align: center;
-            margin-bottom: 25px;
-            transform: translateZ(20px); /* Pops out in 3D */
-        }
-        
+        /* --- 3. TYPOGRAPHY & INPUTS --- */
         .app-branding h1 {
             margin: 0;
             font-size: 1.8rem;
             font-weight: 800;
             letter-spacing: 2px;
             text-transform: uppercase;
+            text-align: center;
             background: linear-gradient(to right, #fff, var(--accent-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
         }
 
         .credit-corner {
@@ -126,25 +118,22 @@
             right: 20px;
             font-size: 0.8rem;
             color: rgba(255, 255, 255, 0.5);
-            font-weight: 400;
-            letter-spacing: 1px;
             z-index: 100;
             pointer-events: none;
         }
 
-        /* --- 5. INPUT AREA --- */
         .search-container {
             display: flex;
             gap: 10px;
-            margin-bottom: 30px;
-            transform: translateZ(30px); /* Pops out more */
+            margin-bottom: 25px;
+            transform: translateZ(30px);
         }
 
         input {
             flex-grow: 1;
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 12px 20px;
+            padding: 10px 20px;
             border-radius: 30px;
             color: white;
             outline: none;
@@ -155,7 +144,7 @@
         button {
             background: var(--accent-color);
             border: none;
-            padding: 12px 25px;
+            padding: 10px 25px;
             border-radius: 30px;
             font-weight: bold;
             cursor: pointer;
@@ -163,46 +152,47 @@
         }
         button:hover { transform: scale(1.05); }
 
-        /* --- 6. WEATHER CONTENT --- */
+        /* --- 4. WEATHER CONTENT --- */
         .main-info {
             text-align: center;
             margin-bottom: 30px;
-            transform: translateZ(40px); /* Highest pop */
+            transform: translateZ(40px);
         }
 
         .city-name { font-size: 2.2rem; font-weight: 700; margin: 0; }
-        .region { color: var(--text-secondary); margin-bottom: 10px; font-size: 0.9rem; }
+        .region { color: var(--text-secondary); margin-bottom: 5px; font-size: 0.9rem; }
         
         .temp-wrapper {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 15px;
+            margin-top: 10px;
         }
 
-        .temp-val { font-size: 4.5rem; font-weight: 700; line-height: 1; }
+        .temp-val { font-size: 4rem; font-weight: 700; line-height: 1; }
         
         .weather-icon-img {
-            width: 80px; height: 80px;
+            width: 70px; height: 70px;
             filter: drop-shadow(0 0 8px rgba(255,255,255,0.4));
             animation: floatIcon 4s ease-in-out infinite; 
         }
         @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-        .condition-text { font-size: 1.2rem; color: var(--accent-color); margin-top: 10px; }
+        .condition-text { font-size: 1.1rem; color: var(--accent-color); margin-top: 5px; }
 
-        /* --- 7. DETAILED GRID --- */
         .details-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+            gap: 10px;
             transform: translateZ(20px);
+            margin-bottom: 20px; 
         }
 
         .grid-item {
             background: rgba(255, 255, 255, 0.05);
-            padding: 15px 5px;
-            border-radius: 15px;
+            padding: 12px 5px;
+            border-radius: 12px;
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -213,21 +203,110 @@
         }
         .grid-item:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-2px); }
 
-        .label { font-size: 0.7rem; color: var(--text-secondary); margin-top: 5px; text-transform: uppercase; }
-        .value { font-size: 0.95rem; font-weight: 600; margin-top: 2px; }
+        .label { font-size: 0.65rem; color: var(--text-secondary); margin-top: 4px; text-transform: uppercase; }
+        .value { font-size: 0.9rem; font-weight: 600; margin-top: 2px; }
 
-        /* Wind Fan Animation */
+        /* --- FORECAST --- */
+        .forecast-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateZ(20px);
+        }
+        .forecast-day { text-align: center; flex: 1; }
+        .day-name { color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 5px; }
+        .day-icon { width: 30px; height: 30px; margin: 0 auto; display: block; filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));}
+        .day-temp { font-weight: 600; font-size: 0.9rem; margin-top: 5px; }
+
+        /* Animations & Utils */
         .wind-fan { width: 24px; height: 24px; position: relative; }
         .fan-blade { position: absolute; top: 50%; left: 50%; width: 24px; height: 4px; background: white; border-radius: 2px; transform: translate(-50%, -50%); }
         .fan-blade:nth-child(2) { transform: translate(-50%, -50%) rotate(90deg); }
         .spinning { animation: spin var(--spin-speed, 2s) linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        /* Loader & Error */
         .loader { width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--accent-color); border-radius: 50%; animation: loadingSpin 1s infinite linear; margin: 20px auto; display: none; }
         @keyframes loadingSpin { 100% { transform: rotate(360deg); } }
         .error-msg { color: #ff4d4d; text-align: center; margin-top: 10px; display:none; }
 
+        /* ========================================= */
+        /* === DESKTOP ZOOM FIX & HORIZONTAL === */
+        /* ========================================= */
+        @media (min-width: 900px) {
+            .glass-card {
+                /* Scale down content to fix 'zoomed in' feel */
+                transform: scale(0.9); 
+                /* Wider card for horizontal look */
+                width: 80%;
+                max-width: 1000px; 
+                padding: 40px;
+                display: flex;
+                flex-direction: column;
+            }
+
+            /* Wrap main content to control layout */
+            #weatherContent {
+                display: grid;
+                grid-template-columns: 0.8fr 1.5fr; /* Info | Grid */
+                grid-template-rows: auto auto;
+                grid-template-areas: 
+                    "main details"
+                    "forecast forecast";
+                gap: 40px;
+                align-items: center;
+                margin-top: 10px;
+            }
+
+            .main-info {
+                grid-area: main;
+                margin-bottom: 0;
+                text-align: center;
+                border-right: 1px solid rgba(255,255,255,0.1);
+                padding-right: 30px;
+            }
+
+            .details-grid {
+                grid-area: details;
+                margin-bottom: 0;
+                gap: 15px; 
+            }
+
+            .forecast-container {
+                grid-area: forecast;
+                margin-top: 25px;
+            }
+
+            /* Adjust search bar to not be full width */
+            .search-container {
+                max-width: 400px;
+                margin: 0 auto 30px auto;
+            }
+        }
+
+        /* ========================================= */
+        /* === MOBILE RESPONSIVENESS === */
+        /* ========================================= */
+        @media (max-width: 768px) {
+            body {
+                height: auto;
+                min-height: 100vh;
+                overflow-y: auto; 
+                display: block; 
+                padding-bottom: 50px;
+            }
+            .scenery-container { position: fixed; }
+            .glass-card {
+                width: 85%;
+                margin: 50px auto; 
+                padding: 30px 20px;
+                transform: none !important; 
+            }
+            .details-grid { grid-template-columns: repeat(2, 1fr); }
+            .temp-val { font-size: 3.5rem; } 
+            .city-name { font-size: 1.8rem; }
+            .credit-corner { position: static; text-align: center; margin-top: 20px; }
+        }
     </style>
 </head>
 <body>
@@ -303,7 +382,28 @@
                     <span class="label">Pressure</span>
                     <span class="value" id="pressureVal">-- mb</span>
                 </div>
+
+                <div class="grid-item">
+                    <span style="font-size:1.2rem">😷</span>
+                    <span class="label">AQI (PM2.5)</span>
+                    <span class="value" id="aqiVal">--</span>
+                </div>
+
+                <div class="grid-item">
+                    <span style="font-size:1.2rem">🌧️</span>
+                    <span class="label">Precip</span>
+                    <span class="value" id="precipVal">--</span>
+                </div>
+
+                <div class="grid-item">
+                    <span style="font-size:1.2rem">☁️</span>
+                    <span class="label">Cloud</span>
+                    <span class="value" id="cloudVal">--</span>
+                </div>
             </div>
+
+            <div class="forecast-container" id="forecastContainer">
+                </div>
         </div>
     </div>
 
@@ -312,7 +412,7 @@
     <script>
         // CONFIG
         const API_KEY = "94bed28c656e4a1f9e985936252611"; 
-        const BASE_URL = "https://api.weatherapi.com/v1/current.json";
+        const BASE_URL = "https://api.weatherapi.com/v1/forecast.json";
 
         // DOM ELEMENTS
         const card = document.getElementById('card3D');
@@ -323,15 +423,16 @@
         const errorMsg = document.getElementById('errorMsg');
         const rainOverlay = document.getElementById('rainOverlay');
         const windFan = document.getElementById('windFan');
+        const forecastContainer = document.getElementById('forecastContainer');
 
-        // --- 3D TILT LOGIC (Restored) ---
+        // --- 3D TILT LOGIC (Desktop Only) ---
         document.addEventListener('mousemove', (e) => {
-            // Calculate center of screen
-            const x = (window.innerWidth / 2 - e.pageX) / 20; // 20 controls sensitivity
-            const y = (window.innerHeight / 2 - e.pageY) / 20;
-
-            // Apply rotation to card
-            card.style.transform = `rotateY(${-x}deg) rotateX(${y}deg)`;
+            if (window.innerWidth > 900) {
+                const x = (window.innerWidth / 2 - e.pageX) / 25; 
+                const y = (window.innerHeight / 2 - e.pageY) / 25;
+                // Combined scale with rotate
+                card.style.transform = `scale(0.9) rotateY(${-x}deg) rotateX(${y}deg)`;
+            }
         });
 
         // --- FETCH LOGIC ---
@@ -346,7 +447,8 @@
             rainOverlay.innerHTML = ''; 
 
             try {
-                const res = await fetch(`${BASE_URL}?key=${API_KEY}&q=${query}`);
+                // Requesting 3 days forecast + AQI
+                const res = await fetch(`${BASE_URL}?key=${API_KEY}&q=${query}&days=3&aqi=yes`);
                 const data = await res.json();
                 if(!res.ok) throw new Error("City not found");
                 renderData(data);
@@ -359,7 +461,7 @@
         }
 
         function renderData(data) {
-            const { location, current } = data;
+            const { location, current, forecast } = data;
 
             document.getElementById('cityName').innerText = location.name;
             document.getElementById('regionName').innerText = `${location.region}, ${location.country}`;
@@ -367,14 +469,43 @@
             document.getElementById('conditionText').innerText = current.condition.text;
             document.getElementById('weatherIcon').src = "https:" + current.condition.icon;
             
+            // Standard Metrics
             document.getElementById('windVal').innerText = current.wind_kph + " km/h";
             document.getElementById('humidityVal').innerText = current.humidity + "%";
             document.getElementById('feelsLikeVal').innerText = Math.round(current.feelslike_c) + "°";
             document.getElementById('visVal').innerText = current.vis_km;
             document.getElementById('uvVal').innerText = current.uv;
             document.getElementById('pressureVal').innerText = current.pressure_mb;
+            
+            // New Metrics
+            document.getElementById('precipVal').innerText = current.precip_mm + " mm";
+            document.getElementById('cloudVal').innerText = current.cloud + "%";
 
-            // Wind Speed Animation Logic
+            // AQI LOGIC - Using PM2.5 Value as the "Number"
+            // Note: This is concentration (ug/m3), not calculated Index, 
+            // but it's the closest specific 'number' provided by this free API.
+            if(current.air_quality && current.air_quality.pm2_5) {
+                document.getElementById('aqiVal').innerText = Math.round(current.air_quality.pm2_5);
+            } else {
+                document.getElementById('aqiVal').innerText = "N/A";
+            }
+
+            // Forecast Logic
+            let forecastHTML = '';
+            forecast.forecastday.forEach(day => {
+                const dateObj = new Date(day.date);
+                const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'short' });
+                forecastHTML += `
+                    <div class="forecast-day">
+                        <div class="day-name">${dayName}</div>
+                        <img src="https:${day.day.condition.icon}" class="day-icon" alt="icon">
+                        <div class="day-temp">${Math.round(day.day.maxtemp_c)}° / ${Math.round(day.day.mintemp_c)}°</div>
+                    </div>
+                `;
+            });
+            forecastContainer.innerHTML = forecastHTML;
+
+            // Animations
             const kph = current.wind_kph;
             let spinDuration;
             if (kph < 5) spinDuration = '4s';
@@ -383,24 +514,14 @@
             else spinDuration = '0.3s';
             windFan.style.setProperty('--spin-speed', spinDuration);
 
-            // Rain Animation Logic
             const cond = current.condition.text.toLowerCase();
             if(cond.includes('rain') || cond.includes('drizzle') || cond.includes('shower')) {
                 createRain();
             }
 
             weatherContent.style.display = 'block';
-        }
-
-        function createRain() {
-            rainOverlay.style.display = 'block';
-            for(let i=0; i<50; i++) {
-                const drop = document.createElement('div');
-                drop.classList.add('rain-drop');
-                drop.style.left = Math.random() * 100 + '%';
-                drop.style.animationDuration = (Math.random() * 1 + 0.5) + 's'; 
-                drop.style.animationDelay = Math.random() * 2 + 's';
-                rainOverlay.appendChild(drop);
+            if(window.innerWidth > 900) {
+                 weatherContent.style.display = 'grid';
             }
         }
 
